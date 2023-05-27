@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MovieLibrary.Data;
+using MovieLibrary.Data.Entities;
+using MovieLibrary.Data.Repository;
 
 namespace MovieLibrary.Api
 {
@@ -20,6 +23,9 @@ namespace MovieLibrary.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEntityFrameworkSqlite().AddDbContext<MovieLibraryContext>();
+
+            services.AddScoped(typeof(DbContext), typeof(MovieLibraryContext));
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddControllers();
             services.AddSwaggerGen(options =>
