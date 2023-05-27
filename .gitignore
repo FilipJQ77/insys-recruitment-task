@@ -196,3 +196,8 @@ FakesAssemblies/
 *.opt
 
 !/lib/*
+
+*.db-shm
+*.db-wal
+
+.idea
