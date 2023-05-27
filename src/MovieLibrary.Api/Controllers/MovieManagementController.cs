@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -67,9 +66,9 @@ namespace MovieLibrary.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            await MovieRepository.AddAsync(movie);
+            var createdMovie = await MovieRepository.AddAsync(movie);
 
-            return CreatedAtAction("GetMovie", new {id = movie.Id}, movie);
+            return CreatedAtAction("GetMovie", new {id = createdMovie.Id}, createdMovie);
         }
 
         // DELETE: v1/MovieManagement/5

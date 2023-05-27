@@ -25,10 +25,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         return await _dbSet.ToListAsync();
     }
 
-    public async Task AddAsync(TEntity entity)
+    public async Task<TEntity> AddAsync(TEntity entity)
     {
-        await _dbSet.AddAsync(entity);
+        var entityEntry = await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
+        return entityEntry.Entity;
     }
 
     public async Task UpdateAsync(TEntity entity)
