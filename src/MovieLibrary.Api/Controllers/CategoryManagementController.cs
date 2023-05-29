@@ -22,7 +22,7 @@ namespace MovieLibrary.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return await CategoryRepository.GetAllAsync();
+            return Ok(await CategoryRepository.GetAllAsync());
         }
 
         // GET: v1/CategoryManagement/5
@@ -31,7 +31,7 @@ namespace MovieLibrary.Api.Controllers
         {
             var category = await CategoryRepository.GetAsync(id);
 
-            return category != null ? category : NotFound();
+            return category != null ? Ok(category) : NotFound();
         }
 
         // PUT: v1/CategoryManagement/5
@@ -50,7 +50,7 @@ namespace MovieLibrary.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (CategoryRepository.GetAsync(id) is null)
+                if (await CategoryRepository.GetAsync(id) is null)
                 {
                     return NotFound();
                 }

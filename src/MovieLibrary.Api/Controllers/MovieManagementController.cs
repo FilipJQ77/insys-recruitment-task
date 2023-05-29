@@ -22,7 +22,9 @@ namespace MovieLibrary.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            return await MovieRepository.GetAllAsync();
+            // TODO MOVE LOGIC TO CORE PROJECT (CQRS MEDIATR)
+            // TODO IQUERYABLE
+            return Ok(await MovieRepository.GetAllAsync());
         }
 
         // GET: v1/MovieManagement/5
@@ -31,7 +33,7 @@ namespace MovieLibrary.Api.Controllers
         {
             var movie = await MovieRepository.GetAsync(id);
 
-            return movie != null ? movie : NotFound();
+            return movie != null ? Ok(movie) : NotFound();
         }
 
         // PUT: v1/MovieManagement/5
@@ -50,7 +52,7 @@ namespace MovieLibrary.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (MovieRepository.GetAsync(id) is null)
+                if (await MovieRepository.GetAsync(id) is null)
                 {
                     return NotFound();
                 }

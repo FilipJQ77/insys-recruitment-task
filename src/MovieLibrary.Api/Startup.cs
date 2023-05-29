@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MovieLibrary.Data;
-using MovieLibrary.Data.Entities;
 using MovieLibrary.Data.Repository;
 
 namespace MovieLibrary.Api
