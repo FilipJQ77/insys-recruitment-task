@@ -8,9 +8,9 @@ namespace MovieLibrary.Core.Category.Handlers;
 
 public class PostCategoryHandler : IRequestHandler<PostCategory, Data.Entities.Category>
 {
-    private readonly Repository<Data.Entities.Category> _categoryRepository;
+    private readonly IRepository<Data.Entities.Category> _categoryRepository;
 
-    public PostCategoryHandler(Repository<Data.Entities.Category> categoryRepository)
+    public PostCategoryHandler(IRepository<Data.Entities.Category> categoryRepository)
     {
         _categoryRepository = categoryRepository;
     }

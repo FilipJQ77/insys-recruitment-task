@@ -9,9 +9,9 @@ namespace MovieLibrary.Core.Category.Handlers;
 
 public class GetCategoriesHandler : IRequestHandler<GetCategories, IEnumerable<Data.Entities.Category>>
 {
-    private readonly Repository<Data.Entities.Category> _categoryRepository;
+    private readonly IRepository<Data.Entities.Category> _categoryRepository;
 
-    public GetCategoriesHandler(Repository<Data.Entities.Category> categoryRepository)
+    public GetCategoriesHandler(IRepository<Data.Entities.Category> categoryRepository)
     {
         _categoryRepository = categoryRepository;
     }

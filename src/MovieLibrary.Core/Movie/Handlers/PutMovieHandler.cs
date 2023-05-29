@@ -2,15 +2,15 @@
 using System.Threading.Tasks;
 using MediatR;
 using MovieLibrary.Core.Movie.Commands;
-using MovieLibrary.Data.Repository;
+using MovieLibrary.Data.Repository.MovieRepository;
 
 namespace MovieLibrary.Core.Movie.Handlers;
 
 public class PutMovieHandler : IRequestHandler<PutMovie, Data.Entities.Movie>
 {
-    private readonly Repository<Data.Entities.Movie> _movieRepository;
+    private readonly IMovieRepository _movieRepository;
 
-    public PutMovieHandler(Repository<Data.Entities.Movie> movieRepository)
+    public PutMovieHandler(IMovieRepository movieRepository)
     {
         _movieRepository = movieRepository;
     }

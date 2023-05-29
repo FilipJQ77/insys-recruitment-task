@@ -8,9 +8,9 @@ namespace MovieLibrary.Core.Category.Handlers;
 
 public class DeleteCategoryHandler : IRequestHandler<DeleteCategory, bool>
 {
-    private readonly Repository<Data.Entities.Category> _categoryRepository;
+    private readonly IRepository<Data.Entities.Category> _categoryRepository;
 
-    public DeleteCategoryHandler(Repository<Data.Entities.Category> categoryRepository)
+    public DeleteCategoryHandler(IRepository<Data.Entities.Category> categoryRepository)
     {
         _categoryRepository = categoryRepository;
     }

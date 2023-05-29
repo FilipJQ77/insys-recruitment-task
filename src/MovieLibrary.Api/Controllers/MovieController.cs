@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using MovieLibrary.Core.Movie.Queries;
 using MovieLibrary.Data.Entities;
 using MovieLibrary.Data.Entities.Dto;
-using MovieLibrary.Data.Repository.MovieRepository;
 
 namespace MovieLibrary.Api.Controllers
 {
@@ -13,7 +12,7 @@ namespace MovieLibrary.Api.Controllers
     [ApiController]
     public class MovieController : ControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
 
         public MovieController(IMediator mediator)
         {

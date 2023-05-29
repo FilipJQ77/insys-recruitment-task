@@ -8,9 +8,9 @@ namespace MovieLibrary.Core.Movie.Handlers;
 
 public class DeleteMovieHandler : IRequestHandler<DeleteMovie, bool>
 {
-    private readonly Repository<Data.Entities.Movie> _movieRepository;
+    private readonly IRepository<Data.Entities.Movie> _movieRepository;
 
-    public DeleteMovieHandler(Repository<Data.Entities.Movie> movieRepository)
+    public DeleteMovieHandler(IRepository<Data.Entities.Movie> movieRepository)
     {
         _movieRepository = movieRepository;
     }

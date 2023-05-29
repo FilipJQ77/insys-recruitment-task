@@ -8,9 +8,9 @@ namespace MovieLibrary.Core.Movie.Handlers;
 
 public class GetMovieHandler : IRequestHandler<GetMovie, Data.Entities.Movie>
 {
-    private readonly MovieRepository _movieRepository;
+    private readonly IMovieRepository _movieRepository;
 
-    public GetMovieHandler(MovieRepository movieRepository)
+    public GetMovieHandler(IMovieRepository movieRepository)
     {
         _movieRepository = movieRepository;
     }
