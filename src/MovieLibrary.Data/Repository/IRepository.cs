@@ -10,6 +10,6 @@ public interface IRepository<TEntity>
     Task<List<TEntity>> GetAllAsync();
     Task<List<TEntity>> GetFilteredAsync(Func<TEntity, bool> predicate);
     Task<TEntity> AddAsync(TEntity entity);
-    Task UpdateAsync(TEntity entity);
-    Task DeleteAsync(TEntity entity);
+    Task<TEntity> UpdateAsync(TEntity entity);
+    Task<bool> DeleteAsync(TEntity entity);
 }

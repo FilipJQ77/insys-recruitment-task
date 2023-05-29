@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MovieLibrary.Core.Category.Commands;
+using MovieLibrary.Core.Category.Queries;
 using MovieLibrary.Data.Entities;
-using MovieLibrary.Data.Repository;
 
 namespace MovieLibrary.Api.Controllers
 {
@@ -11,31 +13,30 @@ namespace MovieLibrary.Api.Controllers
     [ApiController]
     public class CategoryManagementController : ControllerBase
     {
-        private IRepository<Category> CategoryRepository { get; }
+        private readonly IMediator _mediator;
 
-        public CategoryManagementController(IRepository<Category> categoryRepository)
+        public CategoryManagementController(IMediator mediator)
         {
-            CategoryRepository = categoryRepository;
+            _mediator = mediator;
         }
 
-        // GET: v1/CategoryManagement
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return Ok(await CategoryRepository.GetAllAsync());
+            var request = new GetCategories();
+            var result = await _mediator.Send(request);
+            return Ok(result);
         }
 
-        // GET: v1/CategoryManagement/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
-            var category = await CategoryRepository.GetAsync(id);
+            var request = new GetCategory(id);
+            var category = await _mediator.Send(request);
 
             return category != null ? Ok(category) : NotFound();
         }
 
-        // PUT: v1/CategoryManagement/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
@@ -44,46 +45,44 @@ namespace MovieLibrary.Api.Controllers
                 return BadRequest();
             }
 
+            var request = new PutCategory(category);
+
             try
             {
-                await CategoryRepository.UpdateAsync(category);
+                var result = await _mediator.Send(request);
+                return Ok(result);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (await CategoryRepository.GetAsync(id) is null)
+                var getRequest = new GetCategory(id);
+                var getCategory = await _mediator.Send(getRequest);
+                if (getCategory is null)
                 {
                     return NotFound();
                 }
 
                 throw;
             }
-
-            return NoContent();
         }
 
-        // POST: v1/CategoryManagement
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
-            await CategoryRepository.AddAsync(category);
+            var request = new PostCategory(category);
+            var result = await _mediator.Send(request);
 
-            return CreatedAtAction("GetCategory", new {id = category.Id}, category);
+            return CreatedAtAction("GetCategory", new {id = category.Id}, result);
         }
 
-        // DELETE: v1/CategoryManagement/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = await CategoryRepository.GetAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
+            var request = new GetCategory(id);
+            var entity = await _mediator.Send(request);
+            var deleteRequest = new DeleteCategory(entity);
+            var changes = await _mediator.Send(deleteRequest);
 
-            await CategoryRepository.DeleteAsync(category);
-
-            return NoContent();
+            return changes ? NoContent() : NotFound();
         }
     }
 }

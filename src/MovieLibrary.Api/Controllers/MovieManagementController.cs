@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MovieLibrary.Core.Movie.Commands;
+using MovieLibrary.Core.Movie.Queries;
 using MovieLibrary.Data.Entities;
-using MovieLibrary.Data.Repository;
 
 namespace MovieLibrary.Api.Controllers
 {
@@ -11,33 +13,30 @@ namespace MovieLibrary.Api.Controllers
     [ApiController]
     public class MovieManagementController : ControllerBase
     {
-        private IRepository<Movie> MovieRepository { get; }
+        private readonly IMediator _mediator;
 
-        public MovieManagementController(IRepository<Movie> movieRepository)
+        public MovieManagementController(IMediator mediator)
         {
-            MovieRepository = movieRepository;
+            _mediator = mediator;
         }
 
-        // GET: v1/MovieManagement
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
         {
-            // TODO MOVE LOGIC TO CORE PROJECT (CQRS MEDIATR)
-            // TODO IQUERYABLE
-            return Ok(await MovieRepository.GetAllAsync());
+            var request = new GetMovies();
+            var result = await _mediator.Send(request);
+            return Ok(result);
         }
 
-        // GET: v1/MovieManagement/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
-            var movie = await MovieRepository.GetAsync(id);
+            var request = new GetMovie(id);
+            var category = await _mediator.Send(request);
 
-            return movie != null ? Ok(movie) : NotFound();
+            return category != null ? Ok(category) : NotFound();
         }
 
-        // PUT: v1/MovieManagement/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutMovie(int id, Movie movie)
         {
@@ -46,46 +45,44 @@ namespace MovieLibrary.Api.Controllers
                 return BadRequest();
             }
 
+            var request = new PutMovie(movie);
+
             try
             {
-                await MovieRepository.UpdateAsync(movie);
+                var result = await _mediator.Send(request);
+                return Ok(result);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (await MovieRepository.GetAsync(id) is null)
+                var getRequest = new GetMovie(id);
+                var getCategory = await _mediator.Send(getRequest);
+                if (getCategory is null)
                 {
                     return NotFound();
                 }
 
                 throw;
             }
-
-            return NoContent();
         }
 
-        // POST: v1/MovieManagement
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            var createdMovie = await MovieRepository.AddAsync(movie);
+            var request = new PostMovie(movie);
+            var result = await _mediator.Send(request);
 
-            return CreatedAtAction("GetMovie", new {id = createdMovie.Id}, createdMovie);
+            return CreatedAtAction("GetMovie", new {id = movie.Id}, result);
         }
 
-        // DELETE: v1/MovieManagement/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-            var movie = await MovieRepository.GetAsync(id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
+            var request = new GetMovie(id);
+            var entity = await _mediator.Send(request);
+            var deleteRequest = new DeleteMovie(entity);
+            var changes = await _mediator.Send(deleteRequest);
 
-            await MovieRepository.DeleteAsync(movie);
-
-            return NoContent();
+            return changes ? NoContent() : NotFound();
         }
     }
 }

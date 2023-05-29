@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using MovieLibrary.Core.Movie.Queries;
 using MovieLibrary.Data.Entities;
 using MovieLibrary.Data.Entities.Dto;
 using MovieLibrary.Data.Repository.MovieRepository;
@@ -11,17 +13,19 @@ namespace MovieLibrary.Api.Controllers
     [ApiController]
     public class MovieController : ControllerBase
     {
-        private IMovieRepository MovieRepository { get; }
+        private IMediator _mediator;
 
-        public MovieController(IMovieRepository movieRepository)
+        public MovieController(IMediator mediator)
         {
-            MovieRepository = movieRepository;
+            _mediator = mediator;
         }
 
         [HttpGet("Filter")]
         public async Task<ActionResult<IEnumerable<Movie>>> GetFilteredMovies(MovieFilterDto movieFilterDto)
         {
-            return await MovieRepository.GetFilteredAsync(movieFilterDto);
+            var request = new GetFilteredMovies(movieFilterDto);
+            var result = await _mediator.Send(request);
+            return Ok(result);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace MovieLibrary.Data.Entities
     {
         public Movie()
         {
-            this.MovieCategories = new List<MovieCategory>();
+            MovieCategories = new List<MovieCategory>();
         }
 
         public int Id { get; set; }
